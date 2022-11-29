@@ -13,21 +13,12 @@ const loadingManager = new THREE.LoadingManager(
 	//Loaded
 	() => {
 		setTimeout(() => {
-			if (camera.aspect < 1) {
-				gsap.to('.loading-bar-c', 0.2, { opacity: 0, display: 'none' });
-				gsap.to(turbine.position, {
-					duration: 0.6,
-					ease: 'easeInOutQuart',
-					x: '0',
-				});
-			} else {
-				gsap.to('.loading-bar-c', 0.2, { opacity: 0, display: 'none' });
-				gsap.to(turbine.position, {
-					duration: 0.6,
-					ease: 'easeInOutQuart',
-					x: '-0.5',
-				});
-			}
+			gsap.to('.loading-bar-c', 0.2, { opacity: 0, display: 'none' });
+			gsap.to(turbine.position, {
+				duration: 0.6,
+				ease: 'easeInOutQuart',
+				x: '0',
+			});
 		}, 500);
 	},
 	(itemUrl, itemsLoaded, itemsTotal) => {
@@ -44,6 +35,8 @@ const gltfLoader = new GLTFLoader(loadingManager);
 const sizes = {};
 sizes.width = window.innerWidth;
 sizes.height = window.innerHeight;
+const windowHalfX = window.innerWidth / 2;
+const windowHalfY = window.innerHeight / 2;
 
 window.addEventListener('resize', () => {
 	// Save sizes
@@ -213,7 +206,8 @@ let mouseX = 0;
 /**
  * Loop
  */
-
+let targetX_turbine = 0;
+let targetX_truck = 0;
 const clock = new THREE.Clock();
 let previousTime = 0;
 const loop = () => {
@@ -235,6 +229,13 @@ const loop = () => {
 
 	// Keep looping
 	window.requestAnimationFrame(loop);
+	targetX_turbine = mouseX * 0.001;
+	targetX_truck = mouseX * 0.0005;
+
+	if (turbine && truck) {
+		turbine.rotation.y += 0.02 * (targetX_turbine - turbine.rotation.y);
+		truck.rotation.y += 0.02 * (targetX_truck - truck.rotation.y - 1);
+	}
 };
 loop();
 
@@ -275,19 +276,11 @@ $(function () {
 							x: '1',
 						});
 					} else {
-						if (camera.aspect < 1) {
-							gsap.to(nextObject.position, {
-								duration: 1,
-								ease: 'easeInOutQuart',
-								x: '0',
-							});
-						} else {
-							gsap.to(nextObject.position, {
-								duration: 1,
-								ease: 'easeInOutQuart',
-								x: '-0.5',
-							});
-						}
+						gsap.to(nextObject.position, {
+							duration: 1,
+							ease: 'easeInOutQuart',
+							x: '0',
+						});
 					}
 				}, 300);
 			}
@@ -318,13 +311,23 @@ $(function () {
 // }
 window.addEventListener('pointermove', (event) => {
 	// Update the mouse variable
+	mouseX = event.clientX - windowHalfX;
 
-	var deltaX = event.clientX - mouseX;
-	rotateObjects(deltaX);
-	mouseX = event.clientX;
+	// var deltaX = event.clientX - mouseX;
+	// //rotateObjects(deltaX);
+	// turbine.rotation.y = THREE.MathUtils.lerp(
+	// 	turbine.rotation.y,
+	// 	(event.clientX - (window.innerWidth / 2) * Math.PI) / 200,
+	// 	0.01
+	// );
+	// mouseX = event.clientX;
 });
 
-function rotateObjects(deltaX) {
-	turbine.rotation.y += deltaX / 3000;
-	truck.rotation.y += deltaX / 5000;
-}
+// function rotateObjects(deltaX) {
+// 	turbine.rotation.y = THREE.MathUtils.lerp(
+// 		turbine.rotation.y,
+// 		(mouseX * Math.PI) / 2000,
+// 		0.01
+// 	);
+// 	truck.rotation.y += deltaX / 5000;
+// }

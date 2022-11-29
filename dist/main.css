@@ -1,1 +1,41 @@
+* {
+	padding: 0;
+	margin: 0;
+}
 
+body,
+html {
+	overflow: visible;
+}
+
+.canvas-w {
+	position: fixed;
+	top: 0;
+	left: auto;
+	right: 0;
+	width: 65vw;
+	height: 100%;
+}
+.webgl {
+	width: 100%;
+}
+.section,
+.section-n {
+	background: #191919;
+	height: 100vh;
+	width: 100%;
+	color: white;
+}
+
+@media (max-width: 767px) {
+	.canvas-w {
+		width: 100%;
+		height: 90vh;
+		top: auto;
+		left: 0;
+		bottom: 0;
+	}
+}
+
+
+/*# sourceMappingURL=main.css.map*/
